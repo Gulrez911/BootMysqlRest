@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.domain.Example;
+import org.springframework.data.repository.support.Repositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.kgate.demo.dao.UserDao;
 import com.kgate.demo.entity.User;
+import com.kgate.demo.service.UserService;
 import com.kgate.demo.util.CustomError;
 import com.kgate.demo.util.CustomSuccess;
 
@@ -39,6 +42,9 @@ public class UserController {
 
 	@Autowired
 	UserDao dao;
+
+	@Autowired
+	UserService userService;
 
 	@RequestMapping("/home")
 	public String view() {
@@ -57,9 +63,9 @@ public class UserController {
 		return dao.findAll();
 	}
 //create a user
-	
+
 //	@GetMapping(value = "/user")
-	
+
 //	@RequestMapping("/user/{id}")
 //	@ResponseBody
 //	public Optional<User> getUsers(@PathVariable("id") Long id) {
@@ -85,11 +91,13 @@ public class UserController {
 		return dao.findAll();
 	}
 
-	@PostMapping("/user")
-	public User save(User user) {
-		dao.save(user);
-		return user;
-	}
+	// create user
+//	@PostMapping("/user")
+//	public User save(User user) {
+//		dao.save(user);
+//		return user;
+//	}
+
 //Delete user using user id
 //	@DeleteMapping("/user/{id}")
 //	public String save(@PathVariable("id") Long id) {
@@ -121,4 +129,23 @@ public class UserController {
 		dao.save(user);
 		return user;
 	}
+
+//creating user
+	@PostMapping("/saveUser")
+	public ResponseEntity<?> createUser(@RequestBody User user) {
+		logger.info("creating user : {} ", user);
+//		 dao.findByfirstName(user.getFirstName());
+//		user = dao.findById(user.get().getId());
+		try {
+			System.out.println("user name: "+user.getFirstName());
+			List<User> us=  (List<User>) dao.findByfirstName(user.getFirstName());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		System.out.println("user test... " + us);
+		return new ResponseEntity<>(new CustomSuccess("User deleted successfully with id " + user),
+				HttpStatus.OK);
+	}
+
 }
